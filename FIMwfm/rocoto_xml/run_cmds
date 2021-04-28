@@ -1,0 +1,9 @@
+
+module load rocoto
+
+** active **
+rocotorun  -w /scratch4/BMC/fim/lzhang/git_local/FIM_301/FIMwfm/rocoto_xml/FIMXG6_retro_theia.xml -d /home/Kate.Zhang/dbfile301/FIMG6THEIA.db
+rocotostat -w /scratch4/BMC/fim/lzhang/git_local/FIM_301/FIMwfm/rocoto_xml/FIMXG6_retro_theia.xml -d /home/Kate.Zhang/dbfile301/FIMG6THEIA.db
+rocotocheck -w /scratch4/BMC/fim/lzhang/git_local/FIM_301/FIMwfm/rocoto_xml/FIMXG6_retro_theia.xml -d /home/Kate.Zhang/dbfile301/FIMG6THEIA.db
+rocotoboot -w /scratch4/BMC/fim/lzhang/git_local/FIM_301/FIMwfm/rocoto_xml/FIMXG6_retro_theia.xml -d /home/Kate.Zhang/dbfile301/FIMG6THEIA.db
+

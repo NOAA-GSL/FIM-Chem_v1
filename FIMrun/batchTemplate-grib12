@@ -1,0 +1,109 @@
+#!/bin/ksh --login
+
+CONTEXT="batchTemplate-grib12"
+
+# load modules
+module load cnvgrib/1.4.0
+module load wgrib
+
+# Set ISDIR
+if [ $IS -eq 1 ]; then
+  ISDIR="NAT"
+elif [ $IS -eq 2 ]; then
+  ISDIR="PRS"
+else
+  echo "Unsupported vertical coordinate option: $IS"
+  exit 1
+fi
+
+# output settings
+echo "******************************"
+echo "WFM         : $WFM"
+echo "IS          : $IS"
+echo "T           : $T"
+echo "CNVGRIB     : $CNVGRIB"
+echo "FIM_HOME    : $FIM_HOME"
+echo "GLVL        : $GLVL"
+echo "NVL         : $NVL"
+echo "PES         : $PES"
+echo "yyyymmddhhmm: $yyyymmddhhmm"
+echo "MEMBER_ID   : $MEMBER_ID"
+echo "GRID_NAME   : $GRID_NAME"
+echo "******************************"
+
+# Set the path to the run directory
+grib1dir=${FIM_RUN}/fim_${GLVL}_${NVL}_${PES}_${yyyymmddhhmm}/post_${MEMBER_ID}/${GRID_NAME}/${ISDIR}/grib1
+grib2dir=${FIM_RUN}/fim_${GLVL}_${NVL}_${PES}_${yyyymmddhhmm}/post_${MEMBER_ID}/${GRID_NAME}/${ISDIR}/grib2
+echo "grib1dir:  $grib1dir"
+echo "grib2dir:  $grib2dir"
+
+# Create grib2 dir
+if [ ! -d ${grib2dir} ]; then
+  mkdir -p ${grib2dir}
+fi
+
+# Change to the grib1 dir
+if [ -d ${grib1dir} ]; then
+  cd ${grib1dir}
+else
+  echo "ERROR: ${grib1dir} does not exist!"
+  exit ${error}
+fi
+
+#Get yyjjjHHMM
+datestr=`echo ${yyyymmddhhmm} | sed 's/^\([0-9]\{4\}\)\([0-9]\{2\}\)\([0-9]\{2\}\)\([0-9]\{2\}\)\([0-9]\{2\}\)/\1\/\2\/\3 \4\:\5/'`
+yyjjjhhmm=`date +%y%j%H%M -d "${datestr}"`
+
+# Convert grib1 file to grib2
+file=`printf "${yyjjjhhmm}%04d" ${T}`
+echo "cmd:  ${CNVGRIB} -nv -p40 -g12 ${file} ${grib2dir}/${file}.tmp"
+${CNVGRIB} -nv -p40 -g12 ${file} ${grib2dir}/${file}.tmp
+error=$?
+if [ ${error} -ne 0 ]; then
+  echo "ERROR: ${CNVGRIB} -nv -p40 -g12 ${file} ${grib2dir}/${file}.tmp failed!  Exit status=${error}"
+  exit ${error}
+else
+  echo "moving ${grib2dir}/${file}.tmp to ${grib2dir}/${file}"
+  mv ${grib2dir}/${file}.tmp ${grib2dir}/${file}
+  if [[ "${GRID_NAME}" != "fim" ]]; then
+
+    #  create grib1 files for WEASD - snow water equivalent fields
+    #        MODEL.REV.TYPE.YYYYDDDHH0000hh.grb1
+    if [[ "${GRID_NAME}" != "129" ]]; then
+
+      g1name="${file}.weasd"
+      echo "creating GRIB1 files for snow water equivalent fields - WEASD"
+      echo "cmd:  wgrib ${file} | grep "WEASD" | wgrib -i -grib -o ${grib1dir}/${g1name} ${file} " 
+      wgrib ${file} | grep "WEASD" | wgrib -i -grib -o ${grib1dir}/${g1name} ${file} 
+      error=$?
+      if [ ${error} -ne 0 ]; then
+        echo "ERROR:  cannot create WEASD grib1 file, ${grib1dir}/${g1name}!!"
+      fi
+    fi
+
+    # delete grib1 file
+    echo "removing ${grib1dir}/${file}"
+    rm -f ${grib1dir}/${file}
+    error=$?
+    if [ ${error} -ne 0 ]; then
+      echo "ERROR:  can't remove ${grib1dir}/${file}!!"
+      exit ${error}
+    fi
+  fi
+
+# xue add correct grib2 file fcst_len  >252
+  if [ ${T} -gt 252 ]; then
+    ${FIM_HOME}/util/timestamp_fix_grib2/timestamp_fix_grib2 ${grib2dir}/${file}
+    echo "correcting fcst_len in grib2 file"  
+  fi
+# end xue
+fi
+
+# Check to make sure all files were converted
+file=`printf "${yyjjjhhmm}%04d" ${T}`
+if [ ! -s "${grib2dir}/${file}" ]; then
+  echo "ERROR: ${grib2dir}/${file} is missing!"
+# exit 1
+fi
+
+exit 0

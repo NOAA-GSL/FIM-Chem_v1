@@ -1,0 +1,15 @@
+  <task name="FireArchive" maxtries="3">
+    <command>&SCRIPTS;/fires_archive.ksh</command>
+    <account>&PROJECT;</account>
+    <cores>1</cores>
+    <queue>&SERVICE;</queue>
+    &PARTITION_SERVICE;
+    <walltime>00:10:00</walltime>
+    <jobname><cyclestr>fires_@H</cyclestr></jobname>
+    <join><cyclestr>&FIM_LOG;/spectral/fires_@Y@m@d@H.log</cyclestr></join>
+    <envar><name>FIREDIR</name><value>&FIREDIR;</value></envar>
+    <envar><name>YYYY</name><value><cyclestr>@Y</cyclestr></value></envar>
+    <envar><name>MM</name><value><cyclestr>@m</cyclestr></value></envar>
+    <envar><name>DD</name><value><cyclestr>@d</cyclestr></value></envar>
+    <envar><name>HOUR</name><value><cyclestr>@H</cyclestr></value></envar>
+  </task>

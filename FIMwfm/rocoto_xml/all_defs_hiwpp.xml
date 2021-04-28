@@ -1,0 +1,2 @@
+  <!ENTITY % dbi_hiwpp                 SYSTEM  "dbi_hiwpp.xml">
+  <!ENTITY % metatasks           SYSTEM  "metatask_defs.xml">

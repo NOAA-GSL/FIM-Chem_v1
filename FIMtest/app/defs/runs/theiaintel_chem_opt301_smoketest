@@ -1,0 +1,8 @@
+ddts_extends: 'theiaintel_chem_smoketest'
+ddts_build: 'theiaintel_serial_debug'
+namelists:
+  chemwrf:
+    chem_opt: 301
+  queuenamelist:
+    computetasks: '1'
+    maxqueuetime: '00:30:00'

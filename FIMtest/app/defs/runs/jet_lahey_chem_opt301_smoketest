@@ -1,0 +1,6 @@
+ddts_extends: 'jet_lahey_chem_smoketest'
+namelists:
+  chemwrf:
+    chem_opt: 301
+  queuenamelist:
+    maxqueuetime: '00:40:00'

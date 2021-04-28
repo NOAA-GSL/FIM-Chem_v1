@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow [
+
+  <!ENTITY FIM_HOME "/scratch4/BMC/fim/FIMRETRO_r5759">
+  <!ENTITY PES "20">
+  <!ENTITY NPROC "12"> 
+  <!ENTITY GLVL "8">
+  <!ENTITY NVL "64">
+  <!ENTITY ATCFNAME "FIMRETRO_r5759">               <!-- tracker name -->
+  <!ENTITY MODL "FIMRETRO_r5759">            <!-- plot name -->
+  <!ENTITY ANX_MODEL "GFS">               <!-- model analysis to use for AC stats -->
+  <!ENTITY AC_MODEL_NAME "FIMRETRO_r5759">   <!-- AC stats name -->
+  <!ENTITY SOUNDING_MODEL_NAME "FIMRETRO_r5759">
+  <!ENTITY SURFACE_MODEL_NAME "FIMRETRO_r5759">
+  <!ENTITY FCST_INTERVAL "6">
+  <!ENTITY FCST_LENGTH "168">
+  <!-- set this to 3 character str - ex. 96 would be 096 - used for final FIM verification file required -->
+  <!ENTITY FCST_LENGTH_STR "168">
+  <!ENTITY FIM_WALLTIME "02:00:00">
+  <!ENTITY POST_WALLTIME "00:20:00">
+   
+  <!ENTITY MEMBER_ID "C">
+  <!-- post parameters -->
+  <!ENTITY RUN_POP "T">
+  <!ENTITY RUN_INTERP "F">
+  <!ENTITY RUN_GRIB12 "T">
+  <!ENTITY RUN_TRACKER "T">
+  <!ENTITY RUN_NCL "F">
+  <!ENTITY GRID_NAMES "fim">
+  <!ENTITY GRID_SPECS "fim">
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "all_retro_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "all_defs.xml">   %DEFS;
+
+  %theia_retro;
+  %dbi;
+  %metatasks;
+]>
+
+<workflow realtime="F" scheduler="&SCHEDULER;" cyclethrottle="7">
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+
+  <cycledef>201510010000 201510310000 24:00:00</cycledef>
+
+<!--
+ -->
+  &spectral_archive_fdr_task;
+  &prep_task;
+  &fim_omp_task;
+
+  <metatask throttle="18">
+    &post_168hr_metatask;
+    &post_task_fimout;
+    &fimoutPurge_task;                       
+  </metatask>
+
+<!--
+ <metatask>
+    &sounding_168hr_metatask;
+    &sounding_task;
+  </metatask>-->
+
+</workflow>

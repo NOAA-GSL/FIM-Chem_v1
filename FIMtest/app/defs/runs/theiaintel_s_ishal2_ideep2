@@ -1,0 +1,10 @@
+ddts_extends: 'theiaintel_p_ishal2_ideep2'
+ddts_build: 'theiaintel_serial_debug'
+ddts_baseline: 'theiaintel_gf_conv_scheme'
+namelists:
+  queuenamelist:
+    computetasks: '1'
+    maxqueuetime: '00:30:00'
+  writetasknamelist:
+    mpipn: 1 
+    nthreads: 1

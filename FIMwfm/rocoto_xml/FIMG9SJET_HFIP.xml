@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow [
+
+  <!ENTITY FIM_HOME "/pan2/projects/fim-njet/FIM9">
+  <!ENTITY FIM_RUN "&FIM_HOME;/FIMrun_sjet_p">
+  <!ENTITY PES "1280">
+  <!ENTITY NPROC "1312">
+  <!ENTITY GLVL "9">
+  <!ENTITY NVL "64">
+  <!ENTITY ATCFNAME "FIM9">               <!-- tracker name -->
+  <!ENTITY MODL "EXPER_FIM-9">            <!-- plot name -->
+  <!ENTITY ANX_MODEL "GFS">               <!-- model analysis to use for AC stats -->
+  <!ENTITY AC_MODEL_NAME "FIM9DC">   <!-- AC stats name -->
+  <!ENTITY SOUNDING_MODEL_NAME "FIM9">
+  <!ENTITY FCST_INTERVAL "6">            <!-- needs to match ArchvIntvl in FIMnamelist! -->
+  <!ENTITY FCST_LENGTH "336">
+  <!-- set this to 3 character str - ex. 96 would be 096 - used for final FIM verification file required -->
+  <!ENTITY FCST_LENGTH_STR "336">
+  <!ENTITY FIM_WALLTIME "07:25:00">
+  <!ENTITY POST_WALLTIME "02:00:00">
+   
+  <!ENTITY MEMBER_ID "C">
+  <!-- post parameters -->
+  <!ENTITY RUN_POP "T">
+  <!ENTITY RUN_INTERP "F">
+  <!ENTITY RUN_GRIB12 "T">
+  <!ENTITY RUN_TRACKER "T">
+  <!ENTITY RUN_NCL "T">
+  <!ENTITY GRID_NAMES "fimD201D236D244D174D130D83D129">
+  <!ENTITY GRID_SPECS "fim:201:236:244:174:130:83:129">
+
+  <!ENTITY PARTITION "sjet">
+
+  <!--  running without reservation; if entity is defined twice, uses first definition 
+        PARTITION_JET is defined in jet.xml for running with reservation -->
+  <!ENTITY FIM_RESERVATION ""> 
+  <!ENTITY PARTITION_JET "<native>-l partition=&PARTITION;</native>">
+
+  <!--  if reservation, move above previous section;  if entity defined twice, uses first definition -->
+  <!ENTITY DEADLINE_HFIP-FIM "09:25:00">
+  <!ENTITY FIM_RESERVATION "fim-"> 
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "all_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "all_defs.xml">   %DEFS;
+
+  %jet;
+  %dbi;
+  %metatasks;
+]>
+
+<workflow realtime="T" scheduler="&SCHEDULER;" cyclethrottle="3" cyclelifespan="0:45:00:00">
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+<!-- set this to year month day(s) hour(s) minute - NOTE if you are running this for an earlier time,
+       make sure you delete the .store file or it will not restart -->
+  <!-- <cycledef>201211130000 201211130000 06:00:00</cycledef> -->
+  <cycledef>201402151200 202211200000 12:00:00</cycledef>
+
+  &spectral_task;
+  &prep_task;
+  &fim_task;
+
+  <metatask>
+    &post_336hr_metatask;
+    &post_task_fimout;
+  </metatask>
+
+  <metatask>
+    &atcf_metatask;
+    &atcf_task;
+  </metatask>
+
+  &verif_file_task;
+  &verif_task;
+
+  <metatask>
+    &sounding_336hr_metatask;
+    &sounding_task;
+  </metatask>
+
+</workflow>

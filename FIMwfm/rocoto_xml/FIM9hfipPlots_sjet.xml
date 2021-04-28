@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow
+[
+  <!ENTITY FIM_HOME "/pan2/projects/fim-njet/FIM9">
+  <!ENTITY FCST_INTERVAL "6">            
+  <!ENTITY MEMBER_ID "C">
+
+  <!-- reservation                                                                                    -->
+  <!-- ResName                   User     Project        Class    Nodes Cores   Epoch     Offset Len  Cases     Date -->
+  <!-- fim9                     rtfim     rtfim-njet     qtjet.q    104  1248    +6        240   450    -   Jun_25_17:24 -->
+  <!-- fim9-pp                  rtfim     rtfim-njet     qtjet.q      1    12    +6        240   480    -   Jun_25_17:24 -->
+  <!-- fimens                   rtfim     rtfim-njet     qtjet.q    223  2676    +6        390   300    -   Jun__5_16:43 -->
+  <!-- fimens-pp                rtfim     rtfim-njet     qtjet.q      3    36    +6        360   360    -   Jun__5_16:44 -->
+  <!-- hfip-fim                 rtfim     rtfim-njet     qnjet.q     33   264    +12       210   270    -   Mar__8_20:07 -->
+  <!-- hfip-fim-pp              rtfim     rtfim-njet     qnjet.q      2    16    +12       210   315    -   Mar__8_20:07 -->
+
+  <!ENTITY PARTITION "sjet">
+  <!ENTITY FIM_RESERVATION ""> 
+  <!ENTITY PARTITION_JET "<native>-l partition=&PARTITION;</native>">
+
+  <!--  if reservation FOR LATER  -->
+  <!ENTITY DEADLINE_HFIP-FIM "09:25:00">
+  <!ENTITY FIM_RESERVATION "fim-"> 
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "all_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "all_defs.xml">   %DEFS;
+
+  %jet;
+  %metatasks;
+
+]>
+
+  <workflow realtime="T" scheduler="&SCHEDULER;" cyclethrottle="5" cyclelifespan="0:25:00:00">
+  <log><cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H_hfipPlots.log</cyclestr></log> 
+
+  <!-- set this to year month day(s) hour(s) minute - NOTE if you are running this for an earlier time,
+       make sure you delete the .store file or it will not restart -->
+
+  <cycledef group="12hr">201307090000 202306231200 12:00:00</cycledef>
+
+  <metatask>
+    &hfipPlot_168hr_metatask;
+    &hfipPlot_task;
+  </metatask>  
+
+
+</workflow>

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow [
+
+  <!ENTITY FIM_HOME "/scratch4/BMC/fim/lzhang/git_local/FIM_301/">         <!--  JKH:  change to your path -->
+  <!ENTITY SVN_REVISION "26Sep2016">
+  <!ENTITY PES "160">
+  <!ENTITY NPROC "208">
+  <!ENTITY GLVL "6">
+  <!ENTITY NVL "64">
+  <!ENTITY FCST_INTERVAL "6">             <!-- needs to match ArchvIntvl in FIMnamelist! -->
+  <!ENTITY FCST_LENGTH "168">
+  <!-- set this to 3 character str - ex. 96 would be 096 - used for final FIM verification file required -->
+  <!ENTITY FCST_LENGTH_STR "168">
+  <!ENTITY FIM_WALLTIME "07:30:00">                      <!-- JKH:  can change after you determine how long it takes to run -->
+   
+  <!ENTITY MEMBER_ID "C">
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "all_retro_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "all_defs.xml">   %DEFS;
+
+  %theia_retro;
+  %metatasks;
+]>
+
+<!-- JKH:  set cyclethrottle to # cycles to run at the same time -->
+<workflow realtime="F" scheduler="&SCHEDULER;" cyclethrottle="1" >    
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+<!-- set this to year month day(s) hour(s) minute - NOTE if you are running this for an earlier time,
+       make sure you delete the .db file or it will not restart -->
+  <cycledef>201608150000 201608230000 24:00:00</cycledef>            <!--  JKH:  change to your date range -->
+
+  &spectral_archive_fdr_task;
+  &prep_task;
+  &fim_task;
+
+</workflow>

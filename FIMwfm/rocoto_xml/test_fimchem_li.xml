@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow [
+
+  <!ENTITY FIM_HOME "/mnt/lfs2/projects/fim/lzhang/git_local/FIM/">
+  <!ENTITY SVN_REVISION "r5849">
+  <!ENTITY PES "480">
+  <!ENTITY NPROC "504">
+  <!ENTITY GLVL "7">
+  <!ENTITY NVL "64">
+  <!ENTITY FIM_HOME_NO_X "/mnt/lfs2/projects/fim/lzhang/git_local/FIM">
+  <!ENTITY FIM_RUN_NO_X "&FIM_HOME_NO_X;/FIMrun_mvapich_p">
+  <!ENTITY PES_NO_X "120">
+  <!ENTITY ATCFNAME "FIMX">               <!-- tracker name -->
+  <!ENTITY ATCFNAME_NO_X "FIM7">          <!-- tracker name -->
+  <!ENTITY MODL "FIMX">                   <!-- plot name -->
+  <!ENTITY DIFF_MODL "FIM7-FIMX">                   <!-- plot name -->
+  <!ENTITY ANX_MODEL "GFS">               <!-- model analysis to use for AC stats -->
+  <!ENTITY AC_MODEL_NAME "FIMXDC">        <!-- AC stats name -->
+  <!ENTITY SOUNDING_MODEL_NAME "FIMX">
+  <!ENTITY SURFACE_MODEL_NAME "FIMX">
+  <!ENTITY FCST_INTERVAL "1">             <!-- needs to match ArchvIntvl in FIMnamelist! -->
+  <!ENTITY FCST_LENGTH "024">
+  <!-- set this to 3 character str - ex. 96 would be 096 - used for final FIM verification file required -->
+  <!ENTITY FCST_LENGTH_STR "024">
+  <!ENTITY FIM_WALLTIME "07:00:00">
+  <!ENTITY POST_WALLTIME "00:50:00">
+  <!ENTITY NCLDIFF_WALLTIME "00:30:00">
+   
+  <!ENTITY MEMBER_ID "C">
+  <!-- post parameters -->
+  <!ENTITY RUN_POP "T">
+  <!ENTITY RUN_INTERP "F">
+  <!ENTITY RUN_GRIB12 "T">
+  <!ENTITY RUN_TRACKER "F">
+  <!ENTITY RUN_NCL "T">
+  <!ENTITY GRID_NAMES "fimD201D236D244D130D174D83">
+  <!ENTITY GRID_SPECS "fim:201:236:244:130:174:83">
+  <!ENTITY PARTITION "ujet:tjet">
+
+  <!ENTITY FIM_RESERVATION "">
+  <!ENTITY PARTITION_JET "<native>-l partition=&PARTITION;</native>">
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "all_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "all_defs.xml">   %DEFS;
+
+  %jet;
+  %dbi;
+  %metatasks;
+]>
+
+<workflow realtime="F" scheduler="&SCHEDULER;" >
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+<!-- set this to year month day(s) hour(s) minute - NOTE if you are running this for an earlier time,
+       make sure you delete the .store file or it will not restart -->
+  <cycledef>201604150000 201604150000 12:00:00</cycledef>
+
+<!--
+  -->
+  &spectral_task;
+  &prep_task;
+  &fim_task;
+
+  <!--  6-hourly tasks -->
+  <metatask>
+    &post_168hr_metatask;
+    &post_task_fimout;            <!-- all domains except 174 -->
+    &gribsplit_task;
+    <!--
+    &fimxsync_task;
+    -->
+  </metatask>
+  <!--
+  &posttracker_task;
+  -->
+  &nclzip_task;
+
+  <!--  6-hourly tasks -->
+  <metatask>
+     &post_168hr_metatask;
+     &tracker_168hr_metatask;
+     &ncldiff_task;
+  </metatask>
+  &ncldiffzip_task;
+
+  <!--  SOS hourly files -->
+  <!--
+  <metatask>
+     &post_168hr_hourly_metatask;
+     &SOSsync_task; 
+  </metatask>
+  -->
+
+  <!--  6-hourly tasks -->
+  <metatask throttle="10">
+    &tracker_168hr_metatask;                 <!--  t2, fcst vars  -->
+    &pop174_task;
+    &ncl174_task;
+    &fimchemoutPurge_task;                       
+  </metatask>
+
+  <!--  non 6-hourly tasks -->
+  <metatask throttle="10">
+    &tracker_168hr_hourly_no6hr_metatask;                 
+    &popfim_task;
+    &fimoutPurge_no6hr_task;                       
+  </metatask>
+
+<!--
+  <metatask>
+    &surface_72hr_metatask;
+    &surface_task;
+  </metatask>
+
+  &verif_file_task;
+  &verif_task;
+
+  <metatask>
+    &sounding_168hr_metatask;
+    &sounding_task;
+  </metatask>
+-->
+
+</workflow>

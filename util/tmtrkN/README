@@ -1,0 +1,6 @@
+lats and executable files are copied from Mike Fiorino's directories
+
+/lfs2/projects/fim/fiorino/w21/prc/tctrk/
+lrwxrwxrwx  1 Michael.Fiorino fim    33 Jan 16  2014 gettrk_genN.x -> ../../src/tcgfdltrk/gettrk_genN.x*
+lrwxrwxrwx  1 Michael.Fiorino fim    30 Jan 16  2014 grbindex.x -> ../../src/tcgfdltrk/grbindex.x*
+lrwxrwxrwx  1 Michael.Fiorino fim    27 Jan 16  2014 lats.hfip.table.txt -> ../hfip/lats.hfip.table.txt

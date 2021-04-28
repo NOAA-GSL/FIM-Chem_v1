@@ -1,0 +1,5 @@
+ddts_extends: 'theiaintel_5_50_10_1'
+ddts_build: 'theiaintel_nems'
+namelists:
+  queuenamelist:
+    maxqueuetime: '00:30:00'

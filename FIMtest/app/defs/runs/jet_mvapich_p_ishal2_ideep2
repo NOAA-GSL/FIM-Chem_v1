@@ -1,0 +1,8 @@
+ddts_extends: 'jet_mvapich_omp_ishal2_ideep2'
+ddts_build: 'jet_mvapich_parallel'
+ddts_baseline: 'jet_gf_conv_scheme'
+namelists:
+  writetasknamelist:
+    cpn: 16
+    nthreads: 1 
+    mpipn: 16

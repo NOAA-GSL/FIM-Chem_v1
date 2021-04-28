@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<!DOCTYPE workflow [
+
+  <!ENTITY FIM_HOME "/pan2/projects/fim-njet/FIM9">
+  <!ENTITY PES "1200">
+  <!ENTITY NPROC "1224">
+  <!ENTITY GLVL "9">
+  <!ENTITY NVL "64">
+  <!ENTITY ATCFNAME "FIM9">               <!-- tracker name -->
+  <!ENTITY MODL "EXPER_FIM-9">            <!-- plot name -->
+  <!ENTITY ANX_MODEL "GFS">               <!-- model analysis to use for AC stats -->
+  <!ENTITY AC_MODEL_NAME "FIM9DC">   <!-- AC stats name -->
+  <!ENTITY SOUNDING_MODEL_NAME "FIM9">
+  <!ENTITY FCST_INTERVAL "6">
+  <!ENTITY FCST_LENGTH "240">
+  <!-- set this to 3 character str - ex. 96 would be 096 - used for final FIM verification file required -->
+  <!ENTITY FCST_LENGTH_STR "240">
+  <!ENTITY FIM_WALLTIME "07:25:00">
+  <!ENTITY POST_WALLTIME "01:15:00">
+   
+  <!ENTITY MEMBER_ID "C">
+  <!-- post parameters -->
+  <!ENTITY RUN_POP "T">
+  <!ENTITY RUN_INTERP "T">
+  <!ENTITY RUN_GRIB12 "T">
+  <!ENTITY RUN_TRACKER "T">
+  <!ENTITY RUN_NCL "T">
+  <!ENTITY GRID_NAMES "219D236D244D28DafricaDeuropeDfimDw_pacificDfloatingDe_pacific">
+  <!ENTITY GRID_SPECS "219:236:244:28:255D0D201D161D-40000D-40000D128D40000D60000D500D500D64:255D0D210D120D15000D-15000D128D75000D90000D55550D55550D64:fim:255D0D401D241D-40000D90000D128D50000D-120000D41500D41500D64:255D0D92D92D25000D125000D128D50000D150000D30000D30000D64:255D0D444D222D-10000D180000D128D50000D-60000D30000D30000D64">
+
+  <!--  if reservation FOR LATER  -->
+  <!-- <!ENTITY FIM_RESERVATION "      <native>-l partition=&PE;&FIM_RESERVATION;</native>">      <deadline><cyclestr offset="&DEADLINE_HFIP-FIM;">@Y@m@d@H@M</cyclestr></deadline> -->
+  <!-- !!!!! FIM_RESERVATION will have to start with a comma !!!!!  -->
+  <!ENTITY FIM_RESERVATION "">
+
+  <!-- External parameter entites -->
+  <!ENTITY % SITES  SYSTEM "/pan2/projects/fim-njet/FIM9/FIMwfm/rocoto_xml/all_sites.xml">  %SITES;
+  <!ENTITY % TASKS  SYSTEM "/pan2/projects/fim-njet/FIM9/FIMwfm/rocoto_xml/all_tasks.xml">  %TASKS;
+  <!ENTITY % DEFS   SYSTEM "/pan2/projects/fim-njet/FIM9/FIMwfm/rocoto_xml/all_defs.xml">   %DEFS;
+
+  %jet;
+  %dbi;
+  %metatasks;
+]>
+
+<workflow realtime="T" scheduler="&SCHEDULER;" cyclethrottle="3" cyclelifespan="0:25:00:00">
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+<!-- set this to year month day(s) hour(s) minute - NOTE if you are running this for an earlier time,
+       make sure you delete the .store file or it will not restart -->
+  <!-- <cycledef>201211130000 201211130000 12:00:00</cycledef> -->
+  <cycledef>201211211200 202211200000 12:00:00</cycledef>
+
+  &spectral_task;
+  &prep_task;
+  &fim_task;
+
+  <metatask>
+    &post_240hr_metatask;
+    &post_task;
+  </metatask>
+
+  &verif_file_task;
+  &verif_task;
+
+  <metatask>
+    &sounding_336hr_metatask;
+    &sounding_task;
+  </metatask>
+
+</workflow>

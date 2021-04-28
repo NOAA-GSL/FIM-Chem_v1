@@ -1,0 +1,10 @@
+ddts_extends: 'theiaintel_5_50_10_1'
+ddts_build: 'theiaintel_parallel'
+namelists:
+  outputnamelist:
+    fixedgridorder: !unquoted '.true.'
+  prepnamelist:
+    curve: 3
+  queuenamelist:
+    computetasks: '40'
+    maxqueuetime: '00:30:00'

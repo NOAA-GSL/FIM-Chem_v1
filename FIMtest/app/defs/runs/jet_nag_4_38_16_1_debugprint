@@ -1,0 +1,10 @@
+ddts_extends: 'jet_nag_4_38_16_8'
+ddts_build: 'jet_nag_parallel_debugprint'
+namelists:
+  diagnamelist:
+    printipndiag: 21
+  writetasknamelist:
+    max_write_tasks_per_node: 1
+    num_write_tasks: 1
+  queuenamelist:
+    maxqueuetime: '00:30:00'

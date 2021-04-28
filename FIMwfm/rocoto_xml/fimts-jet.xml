@@ -1,0 +1,56 @@
+<?xml version='1.0'?>
+
+<!DOCTYPE workflow [
+<!ENTITY ATCFNAME "FIM">
+<!ENTITY DATADIR "SET BY TEST SUITE">
+<!ENTITY DATADR2 "SET BY TEST SUITE">
+<!ENTITY fcst_24hr "<var name='fcst'> 0 6 12 18 24 </var>">
+<!ENTITY FCST_INTERVAL "6">
+<!ENTITY FCST_LENGTH "24">
+<!ENTITY FCST_LENGTH_STR "024">
+<!ENTITY FIM_HOME "SET BY TEST SUITE">
+<!ENTITY FIM_RESERVATION "">
+<!ENTITY FIM_RUN "SET BY TEST SUITE">
+<!ENTITY FIM_WALLTIME "00:10:00">
+<!ENTITY GLVL "5">
+<!ENTITY GRID_NAMES "228">
+<!ENTITY GRID_SPECS "228">
+<!ENTITY MEMBER_ID "C">
+<!ENTITY MODL "FIM">
+<!ENTITY NPROC "42">  <!-- PES + (num_write_tasks*cpn) + 1*cpn(if root_own_node=t) -->
+<!ENTITY NVL "50">
+<!ENTITY PARTITION "vjet">
+<!ENTITY PARTITION_JET "<native>-l partition=&PARTITION;</native>">
+<!ENTITY PES "10">    <!-- ComputeTasks -->
+<!ENTITY post_24hr_metatask "&t1_24hr; &t2_24hr;">
+<!ENTITY POST_WALLTIME "00:05:00">
+<!ENTITY PROJECT "fim-njet">
+<!ENTITY RUN_GRIB12 "F">
+<!ENTITY RUN_INTERP "F">
+<!ENTITY RUN_NCL "F">
+<!ENTITY RUN_POP "T">
+<!ENTITY RUN_TRACKER "F">
+<!ENTITY t1_24hr "<var name='t1'> 000 006 012 018 024 </var>">
+<!ENTITY t2_24hr "<var name='t2'> 000 006 012 018 024 </var>">
+<!ENTITY % DEFS SYSTEM "all_defs.xml">
+<!ENTITY % SITES SYSTEM "all_sites.xml">
+<!ENTITY % TASKS SYSTEM "all_tasks.xml">
+%DEFS;
+%SITES;
+%TASKS;
+%jet;
+%metatasks;
+]>
+
+<workflow realtime='F' scheduler='&SCHEDULER;'>
+  <log>
+    <cyclestr>&FIM_LOG;/workflow/workflow_@Y@m@d@H.log</cyclestr>
+  </log>
+  <cycledef>201101010000 201101010000 12:00:00</cycledef>
+  &prep_task;
+  &fim_task;
+  <metatask>
+    &post_24hr_metatask;
+    &post_task_fimout;
+  </metatask>
+</workflow>

@@ -1,0 +1,8 @@
+ddts_extends: 'theiaintel_omp_ishal2_ideep2'
+ddts_build: 'theiaintel_parallel_debug'
+ddts_baseline: 'theiaintel_gf_conv_scheme'
+namelists:
+  writetasknamelist:
+    cpn: 24
+    nthreads: 1 
+    mpipn: 24

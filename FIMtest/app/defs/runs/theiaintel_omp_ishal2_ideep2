@@ -1,0 +1,13 @@
+ddts_extends: 'theiaintel_omp_5_50_2_0'
+ddts_build: 'theiaintel_omp_parallel_debug'
+ddts_baseline: 'theiaintel_gf_conv_scheme'
+namelists:
+  outputnamelist:
+    archvtimeunit: 'ts'
+    archvintvl: 6
+    totaltime: 6
+  physicsnamelist:
+    ishal_cnv: 2
+    ideep_cnv: 2
+  postnamelist:
+    t2: 6
